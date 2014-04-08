@@ -1,0 +1,86 @@
+package org.easyworld.project.generate.annotation;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Column {
+	public String length();
+
+	String defaultValue();
+
+	boolean isNull() default true;
+
+	/*
+	 * PRIMARY:primary or unique index FOREIGN:foreign index GENERAL:general
+	 * column
+	 */
+	public enum ColumnKeyType {
+		PRIMARY, FOREIGN, GENERAL;
+	}
+
+	ColumnKeyType columnKeyType() default ColumnKeyType.GENERAL;
+}
+package org.easyworld.project.generate.annotation;
+
+public @interface Component {
+	public enum componentName{
+		
+	}
+}
+package org.easyworld.project.generate.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE) //on class level
+public @interface Module {
+	
+	//
+	
+	//module name
+	String moduleName();
+	
+	//module will be persistence this table.
+	String tableName();
+	
+}
+package org.easyworld.project.generate.annotation;
+
+public @interface UiElement {
+	
+	public enum ElementType{
+		INPUT,SELECT,CHECKBOX,RADIO
+	}
+	
+	public enum ElementAction{
+		BLUR,CHANGE,NULL
+	}
+	
+
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String dictKeyValue();
+	
+	ElementType elementType();
+	
+	public ElementAction elementAction();
+}
+
+package org.easyworld.project.generate.annotation;
+
+public @interface Validation {
+	public enum ValidationExtra{
+		ISExsit,NULL
+	};
+	
+	ValidationExtra validationExtra();
+}
+
