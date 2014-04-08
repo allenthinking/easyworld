@@ -1,0 +1,335 @@
+package org.easyworld.project.generate;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.easyworld.core.string.StringHelper;
+import org.easyworld.file.FileUtils;
+import org.easyworld.project.generate.annotation.Column;
+import org.easyworld.project.generate.annotation.Module;
+import org.easyworld.project.generate.vo.FieldVo;
+import org.easyworld.project.generate.vo.ModuleVo;
+import org.easyworld.project.generate.vo.ProjectVo;
+
+import com.sun.org.apache.xml.internal.security.utils.HelperNodeList;
+import com.sun.xml.internal.ws.message.StringHeader;
+
+import sun.reflect.misc.FieldUtil;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+
+public class GenerateCodeEngine {
+	Configuration cfg = new Configuration();
+
+	public ProjectVo initProejctMeta() {
+		ProjectVo project = new ProjectVo();
+
+		project.setBasePackage("com.fit.erp");
+
+		return project;
+
+	}
+
+	/**
+	 * initialize
+	 * 
+	 * @return
+	 */
+	private ModuleVo initModuelMeta(Class clazz) {
+		ModuleVo module = new ModuleVo();
+		Field[] fields = clazz.getDeclaredFields();
+
+		// initialize module summary information
+		Module moduleAnnotation = (Module) clazz.getAnnotation(Module.class);
+		String moduleName = moduleAnnotation.moduleName();
+		String tableName = moduleAnnotation.tableName();
+		module.setFirstLowModuleName(moduleName);
+		module.setModuleName(moduleName);
+		module.setTableName(tableName);
+
+		int fieldSize = fields.length;
+
+		List<FieldVo> fieldList = new ArrayList<FieldVo>();
+
+		if (fieldSize > 0) {
+			int flag = 0;
+			for (Field field : fields) {
+				flag++;
+				FieldVo fieldVo = new FieldVo();
+				// initialize module property value
+				String fieldName = field.getName();
+				String fullType = field.getType().getName();
+				String propertyType = this.converPropertyType(fullType);
+				String clolumnType = this.converCoumnType(fullType);
+
+				// initialize database information
+				Column columnAnnotaion = field.getAnnotation(Column.class);
+
+				String columnKeyType = "";
+				String defaultValue = "";
+				String columnLength = "";
+
+				Boolean isNull = columnAnnotaion.isNull();
+
+				if (null != columnAnnotaion) {
+					columnKeyType = columnAnnotaion.columnKeyType().toString();
+					defaultValue = columnAnnotaion.defaultValue();
+					isNull = columnAnnotaion.isNull();
+					columnLength = columnAnnotaion.length();
+				}
+
+				fieldVo.setFieldName(fieldName);
+				fieldVo.setColumnName(StringHelper.toUnderscoreName(fieldName));
+				fieldVo.setDefaultValue(defaultValue);
+				fieldVo.setIsNull(isNull);
+				fieldVo.setColumnKeyType(columnKeyType);
+				fieldVo.setColumnType(clolumnType);
+				fieldVo.setPropertyType(propertyType);
+				fieldVo.setLength(columnLength);
+
+				if (fieldSize == flag) {
+					fieldVo.setIsNext(false);
+				} else {
+					fieldVo.setIsNext(true);
+				}
+				fieldList.add(fieldVo);
+			}
+		}
+		module.setFields(fieldList);
+		return module;
+	}
+
+	/**
+	 * Convert the full type to Java Basic Type
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public String converPropertyType(String fullType) {
+		String type = "";
+		if (null == fullType || fullType.equals("")) {
+
+		} else {
+			if (fullType.equals("java.lang.String")) {
+				type = "String";
+			} else if (fullType.equals("java.lang.Integer")) {
+				type = "Integer";
+			} else if (fullType.equals("java.lang.Boolean")) {
+				type = "Boolean";
+			} else if (fullType.equals("java.lang.Date")) {
+				type = "Date";
+			} else if (fullType.equals("java.lang.Time")) {
+				type = "Date";
+			} else if (fullType.equals("java.lang.Timestamp")) {
+				type = "Date";
+			}
+		}
+		return type;
+	}
+
+	/**
+	 * convert Java type to the Database column type
+	 * 
+	 * @param fullType
+	 * @return
+	 */
+	public String converCoumnType(String fullType) {
+		//
+		String dataBaseType = "Oracle";
+		String columnType = "";
+		if (null == dataBaseType || dataBaseType.equals("")) {
+
+		} else if (dataBaseType.equals("Oracle")) {
+			if (null == fullType || fullType.equals("")) {
+
+			} else {
+				if (fullType.equals("java.lang.String")) {
+					columnType = "VARCHAR2";
+				} else if (fullType.equals("java.lang.Integer")) {
+					columnType = "NUMBER(10,0)";
+				} else if (fullType.equals("java.lang.Boolean")) {
+					columnType = "NUMBER(3,0)";
+				} else if (fullType.equals("java.lang.Date")) {
+					columnType = "DATE";
+				} else if (fullType.equals("java.lang.Time")) {
+					columnType = "DATE";
+				} else if (fullType.equals("java.lang.Timestamp")) {
+					columnType = "DATE";
+				}
+			}
+		}
+
+		return columnType;
+
+	}
+
+	/**
+	 * load all template file from the specific path
+	 * 
+	 * @param filePath
+	 */
+	public List<File> loadAllTempate(String filePath) {
+		List<File> templateFiles = new ArrayList<File>();
+		File file = new File(filePath);
+		FileUtils.loadAllFiles(file, templateFiles);
+		List<File> removes = new ArrayList<File>();
+		for (File item : templateFiles) {
+			if (item.isDirectory()) {
+				removes.add(item);
+			}
+		}
+
+		templateFiles.removeAll(removes);
+		return templateFiles;
+	}
+
+	/**
+	 * generate code by template and media data
+	 * 
+	 * @param filePath
+	 * @param meda
+	 */
+	public void generateCode(String filePath, Map<String, Object> meda) {
+		List<File> templateFiles = this.loadAllTempate(filePath);
+		String basePackage = "\\com\\fil\\erp\\";
+		ModuleVo module = (ModuleVo) meda.get("module");
+
+		for (File item : templateFiles) {
+			String outputPath = item.getPath().replace(
+					"\\org\\easyworld\\project\\generate\\template",
+					basePackage);
+			outputPath = outputPath.replace("Template", module.getModuleName());
+			String templatePath = item.getPath();
+			this.generateCodeByFreeMarker(meda, templatePath, outputPath);
+		}
+	}
+
+	/**
+	 * generate code dependency by FreeMarker
+	 * 
+	 * @param moduel
+	 * @param templatePath
+	 * @param outputPath
+	 */
+	public void generateTableSQL(Configuration cfg, ModuleVo moduel,
+			String templatePath, String outputPath) {
+		try {
+
+			// generate SQL script
+
+			List<FieldVo> fieldVos = moduel.getFields();
+
+			Template template = cfg
+					.getTemplate("src/main/java/org/easyworld/project/generate/template/database/createTable.xml");
+			Map<String, Object> rootMap = new HashMap<String, Object>();
+			rootMap.put("moduel", moduel);
+
+			Writer file = new FileWriter(
+					new File(
+							"src/main/java/org/easyworld/project/generate/result/createTable.sql"));
+			template.process(rootMap, file);
+			file.flush();
+			file.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TemplateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * generate code by freemarker.
+	 * 
+	 * @param meda
+	 * @param templatePath
+	 * @param outputPath
+	 */
+	public void generateCodeByFreeMarker(Map<String, Object> meda,
+			String templatePath, String outputPath) {
+		try {
+			Template template = cfg.getTemplate(templatePath);
+
+			Writer file = new FileWriter(outputPath);
+
+			template.process(meda, file);
+
+			file.flush();
+
+			file.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TemplateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * validate the ModuelVo
+	 * 
+	 * @param module
+	 */
+	public void validateModuleVo(ModuleVo module) {
+		List<FieldVo> fields = module.getFields();
+		Exception validationException = new Exception();
+		for (FieldVo field : fields) {
+		}
+	}
+
+	public void generate(String classFullpath) {
+		try {
+			String filePath = "src/main/java/org/easyworld/project/generate/template";
+			Class moduelClazz = Class.forName(classFullpath);
+
+			/*
+			 * init module
+			 */
+			ModuleVo module = this.initModuelMeta(moduelClazz);
+
+			/*
+			 * initiate Project Value Object
+			 */
+			ProjectVo project = this.initProejctMeta();
+			/*
+			 * validate module
+			 */
+			this.validateModuleVo(module);
+
+			/*
+			 * generate code
+			 */
+			Map<String, Object> meda = new HashMap<String, Object>();
+			meda.put("module", module);
+			meda.put("project", project);
+			this.generateCode(filePath, meda);
+
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public static void main(String[] args) {
+		GenerateCodeEngine engine = new GenerateCodeEngine();
+		String classFullpath = "com.fil.erp.model.ErpUser";
+
+		if (null != classFullpath) {
+			engine.generate(classFullpath);
+		}
+		
+		System.out.print(StringHelper.toUnderscoreName("userName"));
+	}
+}
