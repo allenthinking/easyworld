@@ -1,0 +1,257 @@
+package org.easyworld.project.generate.vo;
+
+public class FieldVo {
+	private String fieldName;
+	private String length;
+	private String defaultValue;
+	private Boolean isNull;
+	private String columnKeyType;
+	private String columnType;
+	private String columnName;
+	private String propertyType;
+	private Boolean isNext;
+	
+	/**
+	 * @return the columnName
+	 */
+	public String getColumnName() {
+		return columnName;
+	}
+
+	/**
+	 * @param columnName the columnName to set
+	 */
+	public void setColumnName(String columnName) {
+		this.columnName = columnName;
+	}
+
+	/**
+	 * @return the length
+	 */
+	public String getLength() {
+		return length;
+	}
+
+	/**
+	 * @param length the length to set
+	 */
+	public void setLength(String length) {
+		this.length = length;
+	}
+
+	/**
+	 * @return the isNext
+	 */
+	public Boolean getIsNext() {
+		return isNext;
+	}
+
+	/**
+	 * @param isNext the isNext to set
+	 */
+	public void setIsNext(Boolean isNext) {
+		this.isNext = isNext;
+	}
+
+	/**
+	 * @return the propertyType
+	 */
+	public String getPropertyType() {
+		return propertyType;
+	}
+
+	/**
+	 * @param propertyType the propertyType to set
+	 */
+	public void setPropertyType(String propertyType) {
+		this.propertyType = propertyType;
+	}
+
+	/**
+	 * @return the columnType
+	 */
+	public String getColumnType() {
+		return columnType;
+	}
+
+	/**
+	 * @param columnType the columnType to set
+	 */
+	public void setColumnType(String columnType) {
+		this.columnType = columnType;
+	}
+
+	
+	/**
+	 * @return the fieldName
+	 */
+	public String getFieldName() {
+		return fieldName;
+	}
+
+	/**
+	 * @param fieldName the fieldName to set
+	 */
+	public void setFieldName(String fieldName) {
+		this.fieldName = fieldName;
+	}
+
+	/**
+	 * @return the defaultValue
+	 */
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	/**
+	 * @param defaultValue
+	 *            the defaultValue to set
+	 */
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
+	/**
+	 * @return the isNull
+	 */
+	public Boolean getIsNull() {
+		return isNull;
+	}
+
+	/**
+	 * @param isNull
+	 *            the isNull to set
+	 */
+	public void setIsNull(Boolean isNull) {
+		this.isNull = isNull;
+	}
+
+	/**
+	 * @return the columnType
+	 */
+	public String getColumnKeyType() {
+		return columnKeyType;
+	}
+
+	/**
+	 * @param columnType
+	 *            the columnType to set
+	 */
+	public void setColumnKeyType(String columnKeyType) {
+		this.columnKeyType = columnKeyType;
+	}
+
+}
+package org.easyworld.project.generate.vo;
+
+import java.util.List;
+
+public class ModuleVo {
+	private String moduleName;
+	private String firstLowModuleName;
+	private String tableName;
+	private List<FieldVo> fields;
+	private String sqlScript;
+	
+	
+	/**
+	 * @return the firstLowModuleName
+	 */
+	public String getFirstLowModuleName() {
+		return firstLowModuleName;
+	}
+	/**
+	 * @param firstLowModuleName the firstLowModuleName to set
+	 */
+	public void setFirstLowModuleName(String firstLowModuleName) {
+		this.firstLowModuleName = firstLowModuleName;
+	}
+	/**
+	 * @return the sqlScript
+	 */
+	public String getSqlScript() {
+		return sqlScript;
+	}
+	/**
+	 * @param sqlScript the sqlScript to set
+	 */
+	public void setSqlScript(String sqlScript) {
+		this.sqlScript = sqlScript;
+	}
+	/**
+	 * @return the moduleName
+	 */
+	public String getModuleName() {
+		return moduleName;
+	}
+	/**
+	 * @param moduleName the moduleName to set
+	 */
+	public void setModuleName(String moduleName) {
+		this.moduleName = moduleName;
+	}
+	/**
+	 * @return the tableName
+	 */
+	public String getTableName() {
+		return tableName;
+	}
+	/**
+	 * @param tableName the tableName to set
+	 */
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+	/**
+	 * @return the fields
+	 */
+	public List<FieldVo> getFields() {
+		return fields;
+	}
+	/**
+	 * @param fields the fields to set
+	 */
+	public void setFields(List<FieldVo> fields) {
+		this.fields = fields;
+	}
+	
+	
+}
+
+
+package org.easyworld.project.generate.vo;
+
+public class ProjectVo {
+	private String projectName;
+	private String basePackage;
+	
+	/**
+	 * @return the projectName
+	 */
+	public String getProjectName() {
+		return projectName;
+	}
+	/**
+	 * @param projectName the projectName to set
+	 */
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
+	/**
+	 * @return the basePackage
+	 */
+	public String getBasePackage() {
+		return basePackage;
+	}
+	/**
+	 * @param basePackage the basePackage to set
+	 */
+	public void setBasePackage(String basePackage) {
+		this.basePackage = basePackage;
+	}
+	
+}
+
+
+
+
