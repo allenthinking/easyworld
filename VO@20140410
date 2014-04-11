@@ -1,0 +1,128 @@
+#ModuleVo
+package org.easyworld.project.generate.vo;
+
+import java.util.List;
+
+public class ModuleVo {
+	private String moduleName;
+	private String firstLowModuleName;
+	private String tableName;
+	private List<FieldVo> fields;
+	
+	/**
+	 * permission frefix value , it will be used to set up permission handler.
+	 */
+	private String permissionPrefix;
+	
+	/**
+	 * JSP file prefix value, it will be used to set up the JSP file name.
+	 */
+	private String urlPrefix;
+	private String sqlScript;
+
+	
+	/**
+	 * @return the urlPrefix
+	 */
+	public String getUrlPrefix() {
+		return urlPrefix;
+	}
+
+	/**
+	 * @param urlPrefix the urlPrefix to set
+	 */
+	public void setUrlPrefix(String urlPrefix) {
+		this.urlPrefix = urlPrefix;
+	}
+
+	/**
+	 * @return the permissionPrefix
+	 */
+	public String getPermissionPrefix() {
+		return permissionPrefix;
+	}
+
+	/**
+	 * @param permissionPrefix
+	 *            the permissionPrefix to set
+	 */
+	public void setPermissionPrefix(String permissionPrefix) {
+		this.permissionPrefix = permissionPrefix;
+	}
+
+	/**
+	 * @return the firstLowModuleName
+	 */
+	public String getFirstLowModuleName() {
+		return firstLowModuleName;
+	}
+
+	/**
+	 * @param firstLowModuleName
+	 *            the firstLowModuleName to set
+	 */
+	public void setFirstLowModuleName(String firstLowModuleName) {
+		this.firstLowModuleName = firstLowModuleName;
+	}
+
+	/**
+	 * @return the sqlScript
+	 */
+	public String getSqlScript() {
+		return sqlScript;
+	}
+
+	/**
+	 * @param sqlScript
+	 *            the sqlScript to set
+	 */
+	public void setSqlScript(String sqlScript) {
+		this.sqlScript = sqlScript;
+	}
+
+	/**
+	 * @return the moduleName
+	 */
+	public String getModuleName() {
+		return moduleName;
+	}
+
+	/**
+	 * @param moduleName
+	 *            the moduleName to set
+	 */
+	public void setModuleName(String moduleName) {
+		this.moduleName = moduleName;
+	}
+
+	/**
+	 * @return the tableName
+	 */
+	public String getTableName() {
+		return tableName;
+	}
+
+	/**
+	 * @param tableName
+	 *            the tableName to set
+	 */
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
+	/**
+	 * @return the fields
+	 */
+	public List<FieldVo> getFields() {
+		return fields;
+	}
+
+	/**
+	 * @param fields
+	 *            the fields to set
+	 */
+	public void setFields(List<FieldVo> fields) {
+		this.fields = fields;
+	}
+
+}
